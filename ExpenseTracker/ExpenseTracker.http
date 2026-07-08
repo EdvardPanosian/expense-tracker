@@ -1,0 +1,96 @@
+@ExpenseTracker_HostAddress = https://localhost:7027
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjIiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiZWR2YXJkMiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6ImVkdmFyZDJAZ21haWwuY29tIiwiZXhwIjoxNzgzNjA0ODY0LCJpc3MiOiJFeHBlbnNlVHJhY2tlckFwaSIsImF1ZCI6IkV4cGVuc2VUcmFja2VyQ2xpZW50In0.FCRs6XNYMraom3G1Fz2PoNgFZaYNi2OXWjc3YOsIwGg
+
+POST {{ExpenseTracker_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "edvard2@gmail.com",
+  "password": "123456"
+}
+
+###
+
+POST {{ExpenseTracker_HostAddress}}/api/transactions
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "Salary",
+  "amount": 150000,
+  "type": 1,
+  "category": "Work",
+  "description": "July salary"
+}
+
+###
+POST {{ExpenseTracker_HostAddress}}/api/transactions
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "Benzin",
+  "amount": 10000,
+  "type": 2,
+  "category": "Car",
+  "description": "Ford Fusion"
+}
+
+###
+
+GET {{ExpenseTracker_HostAddress}}/api/transactions
+Authorization: Bearer {{token}}
+
+###
+
+GET {{ExpenseTracker_HostAddress}}/api/transactions/balance
+Authorization: Bearer {{token}}
+
+###
+
+PUT {{ExpenseTracker_HostAddress}}/api/transactions/8
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "Benzin Updated",
+  "amount": 12000,
+  "type": 2,
+  "category": "Car",
+  "description": "Updated Ford Fusion benzine"
+}
+
+###
+
+GET {{ExpenseTracker_HostAddress}}/api/transactions/expenses-by-category
+Authorization: Bearer {{token}}
+
+###
+
+DELETE {{ExpenseTracker_HostAddress}}/api/transactions/8
+Authorization: Bearer {{token}}
+
+###
+
+GET {{ExpenseTracker_HostAddress}}/api/transactions?type=1
+Authorization: Bearer {{token}}
+
+###
+
+GET {{ExpenseTracker_HostAddress}}/api/transactions?type=2
+Authorization: Bearer {{token}}
+
+###
+
+GET {{ExpenseTracker_HostAddress}}/api/transactions?from=2026-07-01&to=2026-07-31
+Authorization: Bearer {{token}}
+
+###
+
+GET {{ExpenseTracker_HostAddress}}/api/transactions?type=2&from=2026-07-01&to=2026-07-31
+Authorization: Bearer {{token}}
+
+###
+
+GET {{ExpenseTracker_HostAddress}}/api/auth/me
+Authorization: Bearer {{token}}
