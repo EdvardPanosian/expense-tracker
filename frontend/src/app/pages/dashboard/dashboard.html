@@ -1,0 +1,133 @@
+<div class="app-layout">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">$</div>
+      <span>Expense Tracker</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="nav-item active" routerLink="/dashboard">
+        <span>▦</span>
+        Dashboard
+      </a>
+
+      <a class="nav-item" routerLink="/transactions">
+        <span>☰</span>
+        Transactions
+      </a>
+
+      <a class="nav-item" routerLink="/categories">
+        <span>▣</span>
+        Categories
+      </a>
+    </nav>
+
+    <button class="logout-btn" type="button" (click)="logout()">
+      ⎋ Logout
+    </button>
+  </aside>
+
+  <main class="main-content">
+    <header class="topbar">
+      <h1>Dashboard</h1>
+
+      <div class="user-menu">
+        <div class="user-avatar">👤</div>
+        <span>{{ userName() }}</span>
+      </div>
+    </header>
+
+    <section class="content-area">
+      <div *ngIf="errorMessage()" class="error-message">
+        {{ errorMessage() }}
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div>
+            <p>Total Income</p>
+            <h2 class="income-color">
+              {{ formatAmount(balance().totalIncome) }}
+            </h2>
+          </div>
+
+          <div class="stat-icon income-bg">↑</div>
+        </div>
+
+        <div class="stat-card">
+          <div>
+            <p>Total Expense</p>
+            <h2 class="expense-color">
+              {{ formatAmount(balance().totalExpense) }}
+            </h2>
+          </div>
+
+          <div class="stat-icon expense-bg">↓</div>
+        </div>
+
+        <div class="stat-card">
+          <div>
+            <p>Balance</p>
+            <h2 class="balance-color">
+              {{ formatAmount(balance().balance) }}
+            </h2>
+          </div>
+
+          <div class="stat-icon balance-bg">▣</div>
+        </div>
+      </div>
+
+      <div class="table-card">
+        <div class="table-header">
+          <h2>Recent Transactions</h2>
+
+          <a routerLink="/transactions">View all</a>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Category</th>
+              <th>Type</th>
+              <th>Amount</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let transaction of transactions()">
+              <td>{{ transaction.title }}</td>
+              <td>{{ transaction.category }}</td>
+
+              <td>
+                <span [class.income-color]="transaction.type === TransactionType.Income"
+                      [class.expense-color]="transaction.type === TransactionType.Expense">
+                  {{ transaction.type === TransactionType.Income ? 'Income' : 'Expense' }}
+                </span>
+              </td>
+
+              <td>
+                <span [class.income-color]="transaction.type === TransactionType.Income"
+                      [class.expense-color]="transaction.type === TransactionType.Expense">
+                  {{ transaction.type === TransactionType.Income ? '+' : '-' }}
+                  {{ formatAmount(transaction.amount) }}
+                </span>
+              </td>
+
+              <td>
+                {{ transaction.date | date: 'mediumDate' }}
+              </td>
+            </tr>
+
+            <tr *ngIf="transactions().length === 0">
+              <td colspan="5" class="empty-row">
+                No transactions yet.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</div>

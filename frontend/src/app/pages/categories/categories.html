@@ -1,0 +1,100 @@
+<div class="app-layout">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">$</div>
+      <span>Expense Tracker</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="nav-item" routerLink="/dashboard">
+        <span>▦</span>
+        Dashboard
+      </a>
+
+      <a class="nav-item" routerLink="/transactions">
+        <span>☰</span>
+        Transactions
+      </a>
+
+      <a class="nav-item active" routerLink="/categories">
+        <span>▣</span>
+        Categories
+      </a>
+    </nav>
+
+    <button class="logout-btn" type="button" (click)="logout()">
+      ⎋ Logout
+    </button>
+  </aside>
+
+  <main class="main-content">
+    <header class="topbar">
+      <h1>Categories</h1>
+
+      <div class="user-menu">
+        <div class="user-avatar">👤</div>
+        <span>{{ userName() }}</span>
+      </div>
+    </header>
+
+    <section class="content-area">
+      <div *ngIf="errorMessage()" class="error-message">
+        {{ errorMessage() }}
+      </div>
+
+      <div class="summary-card">
+        <div>
+          <p>Total Expenses by Categories</p>
+          <h2>{{ formatAmount(totalExpense()) }}</h2>
+        </div>
+
+        <div class="summary-icon">▣</div>
+      </div>
+
+      <div class="table-card">
+        <div class="table-header">
+          <h2>Expense Categories</h2>
+          <span>{{ categories().length }} categories</span>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th>Total Amount</th>
+              <th>Percentage</th>
+              <th>Progress</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let item of categories()">
+              <td>{{ item.category }}</td>
+
+              <td class="expense-color">
+                {{ formatAmount(item.totalAmount) }}
+              </td>
+
+              <td>
+                {{ item.percentage | number: '1.0-1' }}%
+              </td>
+
+              <td>
+                <div class="progress">
+                  <div class="progress-fill"
+                       [style.width.%]="getProgressWidth(item.percentage)"></div>
+                </div>
+              </td>
+            </tr>
+
+            <tr *ngIf="categories().length === 0">
+              <td colspan="4" class="empty-row">
+                No expense categories yet.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</div>

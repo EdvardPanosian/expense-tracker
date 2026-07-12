@@ -1,0 +1,204 @@
+<div class="app-layout">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">$</div>
+      <span>Expense Tracker</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="nav-item" routerLink="/dashboard">
+        <span>▦</span>
+        Dashboard
+      </a>
+
+      <a class="nav-item active" routerLink="/transactions">
+        <span>☰</span>
+        Transactions
+      </a>
+
+      <a class="nav-item" routerLink="/categories">
+        <span>▣</span>
+        Categories
+      </a>
+    </nav>
+
+    <button class="logout-btn" type="button" (click)="logout()">
+      ⎋ Logout
+    </button>
+  </aside>
+
+  <main class="main-content">
+    <header class="topbar">
+      <h1>Transactions</h1>
+
+      <button class="add-btn" type="button" (click)="openAddModal()">
+        + Add Transaction
+      </button>
+    </header>
+
+    <section class="content-area">
+      <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage() }}
+      </div>
+
+      <div class="filter-card">
+        <button type="button"
+                class="filter-btn"
+                [class.active]="selectedFilter() === 'all'"
+                (click)="changeFilter('all')">
+          All
+        </button>
+
+        <button type="button"
+                class="filter-btn"
+                [class.active]="selectedFilter() === 'income'"
+                (click)="changeFilter('income')">
+          Income
+        </button>
+
+        <button type="button"
+                class="filter-btn"
+                [class.active]="selectedFilter() === 'expense'"
+                (click)="changeFilter('expense')">
+          Expense
+        </button>
+      </div>
+
+      <div class="table-card">
+        <div class="table-header">
+          <h2>All Transactions</h2>
+          <span>{{ transactions().length }} items</span>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Category</th>
+              <th>Type</th>
+              <th>Amount</th>
+              <th>Date</th>
+              <th class="actions-column">Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let transaction of transactions()">
+              <td>{{ transaction.title }}</td>
+              <td>{{ transaction.category }}</td>
+
+              <td>
+                <span class="type-badge"
+                      [class.income-badge]="transaction.type === TransactionType.Income"
+                      [class.expense-badge]="transaction.type === TransactionType.Expense">
+                  {{ transaction.type === TransactionType.Income ? 'Income' : 'Expense' }}
+                </span>
+              </td>
+
+              <td>
+                <span [class.income-color]="transaction.type === TransactionType.Income"
+                      [class.expense-color]="transaction.type === TransactionType.Expense">
+                  {{ transaction.type === TransactionType.Income ? '+' : '-' }}
+                  {{ formatAmount(transaction.amount) }}
+                </span>
+              </td>
+
+              <td>{{ transaction.date | date: 'mediumDate' }}</td>
+
+              <td class="actions">
+                <button type="button"
+                        class="edit-btn"
+                        (click)="openEditModal(transaction)">
+                  Edit
+                </button>
+
+                <button type="button"
+                        class="delete-btn"
+                        (click)="deleteTransaction(transaction.id)">
+                  Delete
+                </button>
+              </td>
+            </tr>
+
+            <tr *ngIf="transactions().length === 0">
+              <td colspan="6" class="empty-row">
+                No transactions yet.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="modal-backdrop" *ngIf="isModalOpen()">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h2>{{ isEditMode() ? 'Edit Transaction' : 'Add Transaction' }}</h2>
+
+      <button class="close-btn" type="button" (click)="closeModal()">
+        ×
+      </button>
+    </div>
+
+    <form (ngSubmit)="saveTransaction()">
+      <div class="form-group">
+        <label>Title</label>
+        <input type="text"
+               name="title"
+               placeholder="Salary, Food, Taxi..."
+               [(ngModel)]="form.title" />
+      </div>
+
+      <div class="form-group">
+        <label>Amount</label>
+        <input type="number"
+               name="amount"
+               placeholder="Amount"
+               [(ngModel)]="form.amount" />
+      </div>
+
+      <div class="form-group">
+        <label>Type</label>
+        <select name="type" [(ngModel)]="form.type">
+          <option [ngValue]="TransactionType.Income">Income</option>
+          <option [ngValue]="TransactionType.Expense">Expense</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Category</label>
+        <input type="text"
+               name="category"
+               placeholder="Food, Transport, Salary..."
+               [(ngModel)]="form.category" />
+      </div>
+
+      <div class="form-group">
+        <label>Date</label>
+        <input type="date"
+               name="date"
+               [(ngModel)]="form.date" />
+      </div>
+
+      <div class="form-group">
+        <label>Description</label>
+        <textarea name="description"
+                  rows="3"
+                  placeholder="Optional description"
+                  [(ngModel)]="form.description"></textarea>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="cancel-btn" (click)="closeModal()">
+          Cancel
+        </button>
+
+        <button type="submit" class="save-btn">
+          {{ isEditMode() ? 'Save Changes' : 'Add Transaction' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

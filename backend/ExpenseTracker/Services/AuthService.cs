@@ -23,8 +23,11 @@ namespace ExpenseTracker.Services
 
         public async Task<AuthResponseDto> RegisterAsync(RegisterDto dto)
         {
+            var email = dto.Email.Trim().ToLower();
+            var username = dto.Username.Trim();
+
             var emailExists = await _context.Users
-                .AnyAsync(u => u.Email == dto.Email);
+                .AnyAsync(u => u.Email.ToLower() == email);
 
             if (emailExists)
             {
@@ -33,8 +36,8 @@ namespace ExpenseTracker.Services
 
             var user = new User
             {
-                Username = dto.Username,
-                Email = dto.Email,
+                Username = username,
+                Email = email,
                 PasswordHash = HashPassword(dto.Password),
                 CreateAt = DateTime.Now
             };
@@ -42,12 +45,14 @@ namespace ExpenseTracker.Services
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
+            var token = GenerateToken(user);
+
             return new AuthResponseDto
             {
                 UserId = user.Id,
                 Username = user.Username,
                 Email = user.Email,
-                Token = GenerateToken(user)
+                Token = token
             };
         }
 
